@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="intents"
+            type="android.content.Intent" />
+
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp"
+            tools:context=".ui.activities.AddEditNote">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/title_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/title"
+                android:inputType="textCapWords"
+                android:text="@{intents.hasExtra(`EXTRA_ID`)? intents.getStringExtra(`EXTRA_TITLE`): ``}" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/content_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/description"
+                android:inputType="textMultiLine|textCapSentences"
+                android:lines="15"
+                android:text="@{intents.hasExtra(`EXTRA_ID`)? intents.getStringExtra(`EXTRA_CONTENT`): ``}" />
+
+
+        </LinearLayout>
+
+    </ScrollView>
+</layout>
