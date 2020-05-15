@@ -1,6 +1,7 @@
 package com.memo.mynotes.ui.activities
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -41,6 +42,7 @@ class AddEditNote : AppCompatActivity() {
 
         addEditViewModel = ViewModelProviders.of(this).get(AddEditViewModel::class.java)
         addEditViewModel.initNote(noteExtra)
+
         addEditViewModel.isFavorite().observe(this, androidx.lifecycle.Observer {
             if (it) {
                 binder.favImageView.setImageResource(R.drawable.ic_favorite)
@@ -49,10 +51,26 @@ class AddEditNote : AppCompatActivity() {
             }
         })
 
+        addEditViewModel.getNoteColor().observe(this, androidx.lifecycle.Observer {
+            binder.root.setBackgroundColor(it)
+        })
+
+        checkColorButtons()
+
         binder.favImageView.setOnClickListener {
             addEditViewModel.setFavorite()
         }
 
+    }
+
+    private fun checkColorButtons() {
+        binder.whiteButton.setOnClickListener { addEditViewModel.setColor((Color.parseColor("#ffffff"))) }
+
+        binder.blueButton.setOnClickListener { addEditViewModel.setColor(Color.parseColor("#216AE3")) }
+
+        binder.greenButton.setOnClickListener { addEditViewModel.setColor(Color.parseColor("#00ff00")) }
+
+        binder.pinkButton.setOnClickListener { addEditViewModel.setColor(Color.parseColor("#FFC0CB")) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -74,7 +92,6 @@ class AddEditNote : AppCompatActivity() {
             }
             R.id.del_note -> {
                 // delete this note
-
                 addEditViewModel.deleteNote(noteExtra!!)
                 finish()
 
@@ -96,6 +113,7 @@ class AddEditNote : AppCompatActivity() {
         val content = binder.contentEditText.text.toString().trim()
         val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
         val favorite = addEditViewModel.isFavorite().value
+        val noteColor = addEditViewModel.getNoteColor().value
 
 
         if (title.isEmpty() || content.isEmpty()) {
@@ -105,7 +123,8 @@ class AddEditNote : AppCompatActivity() {
 
         val intent = Intent()
 
-        val newNote = Note(id!!, title, content, favorite!!, creationDate = date)
+        val newNote =
+            Note(id!!, title, content, favorite!!, creationDate = date, noteColor = noteColor!!)
 
         intent.putExtra("note", newNote)
 

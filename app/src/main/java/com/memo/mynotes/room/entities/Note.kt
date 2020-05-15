@@ -1,5 +1,6 @@
 package com.memo.mynotes.room.entities
 
+import android.graphics.Color
 import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -13,7 +14,8 @@ data class Note(
     @ColumnInfo(name = "title") val title: String,
     @ColumnInfo(name = "content") val content: String,
     @ColumnInfo(name = "favorite") val isFavorite: Boolean = false,
-    @ColumnInfo(name = "creation_date") val creationDate: String
+    @ColumnInfo(name = "creation_date") val creationDate: String,
+    @ColumnInfo(name = "note_color") val noteColor: Int = Color.WHITE
 ) : Parcelable {
 
     override fun equals(other: Any?): Boolean {
@@ -38,6 +40,10 @@ data class Note(
         }
 
         if (creationDate != other.creationDate) {
+            return false
+        }
+
+        if (noteColor != other.noteColor) {
             return false
         }
 

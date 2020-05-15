@@ -9,7 +9,7 @@ import com.memo.mynotes.room.dao.NoteDao
 import com.memo.mynotes.room.entities.Note
 import com.memo.mynotes.utils.Converters
 
-@Database(entities = [Note::class], version = 3, exportSchema = false)
+@Database(entities = [Note::class], version = 4, exportSchema = false)
 abstract class NoteDb : RoomDatabase() {
 
     abstract fun noteDao(): NoteDao

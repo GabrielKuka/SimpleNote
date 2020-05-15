@@ -111,6 +111,7 @@ class HomePage : AppCompatActivity(), NotesAdapter.Interaction {
         notesAdapter.notifyDataSetChanged()
 
         if (resultCode == Activity.RESULT_OK) {
+
             val recNote = data?.getParcelableExtra<Note>("note")
 
             when (requestCode) {
@@ -123,7 +124,8 @@ class HomePage : AppCompatActivity(), NotesAdapter.Interaction {
                             recNote?.title!!,
                             recNote.content,
                             recNote.isFavorite,
-                            recNote.creationDate
+                            recNote.creationDate,
+                            recNote.noteColor
                         )
 
                     homePageVM.insert(note)
@@ -138,7 +140,8 @@ class HomePage : AppCompatActivity(), NotesAdapter.Interaction {
                         recNote.title,
                         recNote.content,
                         recNote.isFavorite,
-                        recNote.creationDate
+                        recNote.creationDate,
+                        recNote.noteColor
                     )
                     homePageVM.update(note)
                 }
@@ -168,7 +171,8 @@ class HomePage : AppCompatActivity(), NotesAdapter.Interaction {
 
     override fun onFavButtonClicked(note: Note) {
         val fav = !note.isFavorite
-        val newNote = Note(note.id, note.title, note.content, fav, note.creationDate)
+        val newNote =
+            Note(note.id, note.title, note.content, fav, note.creationDate, note.noteColor)
         homePageVM.update(newNote)
     }
 
