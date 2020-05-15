@@ -5,6 +5,10 @@
         android:id="@+id/layout_button"
         android:icon="@drawable/ic_view_grid"
         android:title="@string/grid"
-        app:showAsAction="always"
-        />
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/del_all_button"
+        android:title="@string/del_all"
+        app:showAsAction="never" />
 </menu>

@@ -6,34 +6,62 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProviders
 import com.memo.mynotes.R
 import com.memo.mynotes.databinding.AddNoteActivityBinding
+import com.memo.mynotes.room.entities.Note
 import com.memo.mynotes.utils.MessageHandler
+import com.memo.mynotes.viewmodels.AddEditViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
 class AddEditNote : AppCompatActivity() {
 
-    private lateinit var binding: AddNoteActivityBinding
+    private lateinit var binder: AddNoteActivityBinding
+    private lateinit var addEditViewModel: AddEditViewModel
+    private var noteExtra: Note? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding =
+        binder =
             DataBindingUtil.setContentView(this, R.layout.add_note_activity)
 
-        binding.intents = intent
+        noteExtra = intent.getParcelableExtra("note")
+
+        binder.note = noteExtra
+
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close)
 
-        title = if (hasIdExtra()) {
+        title = if (noteExtra != null) {
             "Edit Note"
-
         } else {
+
             "Add a note"
         }
+
+        addEditViewModel = ViewModelProviders.of(this).get(AddEditViewModel::class.java)
+        addEditViewModel.initNote(noteExtra)
+        addEditViewModel.isFavorite().observe(this, androidx.lifecycle.Observer {
+            if (it) {
+                binder.favImageView.setImageResource(R.drawable.ic_favorite)
+            } else {
+                binder.favImageView.setImageResource(R.drawable.ic_not_favorite)
+            }
+        })
+
+        binder.favImageView.setOnClickListener {
+            addEditViewModel.setFavorite()
+        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.add_note_menu, menu)
+
+        if (noteExtra == null) {
+            menu?.findItem(R.id.del_note)?.isVisible = false
+        }
+
         return true
     }
 
@@ -44,23 +72,31 @@ class AddEditNote : AppCompatActivity() {
                 saveNote()
                 true
             }
+            R.id.del_note -> {
+                // delete this note
+
+                addEditViewModel.deleteNote(noteExtra!!)
+                finish()
+
+                true
+            }
             else -> {
                 super.onOptionsItemSelected(item)
             }
         }
     }
 
-    private fun hasIdExtra(): Boolean {
-        return intent.hasExtra("EXTRA_ID")
-    }
-
     private fun saveNote() {
-
-        val title = binding.titleEditText.text.toString().trim()
-        val content = binding.contentEditText.text.toString().trim()
+        val id = if (noteExtra == null) {
+            -1
+        } else {
+            noteExtra?.id
+        }
+        val title = binder.titleEditText.text.toString().trim()
+        val content = binder.contentEditText.text.toString().trim()
         val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-        val favorite = intent.getBooleanExtra("EXTRA_FAVORITE", false)
-        // add a checkbox and retrieve the value for favorite
+        val favorite = addEditViewModel.isFavorite().value
+
 
         if (title.isEmpty() || content.isEmpty()) {
             MessageHandler.displayToast(this, "Fill all the fields.")
@@ -68,20 +104,14 @@ class AddEditNote : AppCompatActivity() {
         }
 
         val intent = Intent()
-        intent.putExtra("EXTRA_TITLE", title)
-        intent.putExtra("EXTRA_CONTENT", content)
-        intent.putExtra(
-            "EXTRA_FAVORITE",
-            favorite
-        )        // set the favorite to the value of checkbox
-        intent.putExtra("CREATION_DATE", date)
 
-        val id = getIntent().getIntExtra("EXTRA_ID", -1)
-        if (id != -1) {
-            intent.putExtra("EXTRA_ID", id)
-        }
+        val newNote = Note(id!!, title, content, favorite!!, creationDate = date)
+
+        intent.putExtra("note", newNote)
 
         setResult(RESULT_OK, intent)
         finish()
     }
+
+
 }

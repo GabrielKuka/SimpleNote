@@ -29,4 +29,5 @@ class BasicDialog(private val content: String = "", private val action: () -> Un
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
     }
+
 }

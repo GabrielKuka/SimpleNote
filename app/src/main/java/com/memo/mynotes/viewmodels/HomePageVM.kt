@@ -54,4 +54,8 @@ class HomePageVM(application: Application) : AndroidViewModel(application) {
         return this.allNotes
     }
 
+    fun <T> MutableLiveData<T>.notifyObserver(){
+        this.value = this.value
+    }
+
 }

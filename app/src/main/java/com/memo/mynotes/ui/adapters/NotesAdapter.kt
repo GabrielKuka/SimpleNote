@@ -13,6 +13,18 @@ import com.memo.mynotes.room.entities.Note
 class NotesAdapter(private val interaction: Interaction? = null) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
+    fun submitList(list: List<Note>) {
+        differ.submitList(list)
+    }
+
+    override fun getItemCount(): Int {
+        return differ.currentList.size
+    }
+
+    fun getNoteAt(position: Int): Note {
+        return differ.currentList[position]
+    }
+
 
     val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Note>() {
 
@@ -27,7 +39,6 @@ class NotesAdapter(private val interaction: Interaction? = null) :
     }
     private val differ = AsyncListDiffer(this, DIFF_CALLBACK)
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
         val binder: NotesItemBinding = DataBindingUtil.inflate(
@@ -40,7 +51,6 @@ class NotesAdapter(private val interaction: Interaction? = null) :
         return NoteViewHolder(binder)
     }
 
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is NoteViewHolder -> {
@@ -52,29 +62,7 @@ class NotesAdapter(private val interaction: Interaction? = null) :
         }
     }
 
-    override fun getItemCount(): Int {
-        return differ.currentList.size
-    }
-
-
-    fun submitList(list: List<Note>) {
-        if (!list.isNullOrEmpty())
-            differ.submitList(list)
-        else
-            println("List is empty!")
-    }
-
-    fun getNoteAt(position: Int): Note {
-        return differ.currentList[position]
-    }
-
-
-    class NoteViewHolder
-    constructor(
-        val binder: NotesItemBinding
-    ) : RecyclerView.ViewHolder(binder.root) {
-
-    }
+    class NoteViewHolder(val binder: NotesItemBinding) : RecyclerView.ViewHolder(binder.root)
 
     interface Interaction {
         fun onItemSelected(item: Note)

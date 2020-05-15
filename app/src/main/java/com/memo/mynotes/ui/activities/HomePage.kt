@@ -1,5 +1,6 @@
 package com.memo.mynotes.ui.activities
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -16,6 +17,7 @@ import com.memo.mynotes.R
 import com.memo.mynotes.databinding.HomePageActivityBinding
 import com.memo.mynotes.room.entities.Note
 import com.memo.mynotes.ui.adapters.NotesAdapter
+import com.memo.mynotes.ui.dialogs.BasicDialog
 import com.memo.mynotes.utils.FabHandler
 import com.memo.mynotes.utils.MessageHandler
 import com.memo.mynotes.viewmodels.HomePageVM
@@ -38,7 +40,7 @@ class HomePage : AppCompatActivity(), NotesAdapter.Interaction {
 
         initViewModel()
 
-        add_note_button.setOnClickListener {
+        binder.addNoteButton.setOnClickListener {
             startActivityForResult(Intent(this, AddEditNote::class.java), ADD_NOTE_REQUEST)
         }
 
@@ -87,7 +89,14 @@ class HomePage : AppCompatActivity(), NotesAdapter.Interaction {
                     homePageVM.setLayoutPreference(1)
                     item.icon = getDrawable(R.drawable.ic_view_list)
                 }
-
+                true
+            }
+            R.id.del_all_button -> {
+                // delete all notes
+                val content = "Delete all notes?"
+                BasicDialog(content) {
+                    homePageVM.deleteAllNotes()
+                }.show(supportFragmentManager, "")
                 true
             }
             else -> {
@@ -99,33 +108,41 @@ class HomePage : AppCompatActivity(), NotesAdapter.Interaction {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == ADD_NOTE_REQUEST && resultCode == RESULT_OK) {
-            val title = data?.getStringExtra("EXTRA_TITLE")
-            val content = data?.getStringExtra("EXTRA_CONTENT")
-            val favorite = data?.getBooleanExtra("EXTRA_FAVORITE", false)
-            val date = data?.getStringExtra("CREATION_DATE")
+        notesAdapter.notifyDataSetChanged()
 
+        if (resultCode == Activity.RESULT_OK) {
+            val recNote = data?.getParcelableExtra<Note>("note")
 
-            val note = Note(0, title!!, content!!, favorite!!, date!!)
-            homePageVM.insert(note)
-            MessageHandler.displayToast(this, "Note added.")
+            when (requestCode) {
 
-        } else if (requestCode == EDIT_NOTE_REQUEST && resultCode == RESULT_OK) {
+                ADD_NOTE_REQUEST -> {
 
-            val id = data?.getIntExtra("EXTRA_ID", -1)
+                    val note =
+                        Note(
+                            0,
+                            recNote?.title!!,
+                            recNote.content,
+                            recNote.isFavorite,
+                            recNote.creationDate
+                        )
 
-            if (id == -1) {
-                MessageHandler.displayToast(this, "Something went wrong.")
-                return
+                    homePageVM.insert(note)
+
+                    MessageHandler.displayToast(this, "Note added.")
+
+                }
+                EDIT_NOTE_REQUEST -> {
+
+                    val note = Note(
+                        recNote?.id!!,
+                        recNote.title,
+                        recNote.content,
+                        recNote.isFavorite,
+                        recNote.creationDate
+                    )
+                    homePageVM.update(note)
+                }
             }
-
-            val title = data?.getStringExtra("EXTRA_TITLE")
-            val content = data?.getStringExtra("EXTRA_CONTENT")
-            val favorite = data?.getBooleanExtra("EXTRA_FAVORITE", false)
-            val date = data?.getStringExtra("CREATION_DATE")
-
-            val note = Note(id!!, title!!, content!!, favorite!!, date!!)
-            homePageVM.update(note)
 
         } else {
             MessageHandler.displayToast(this, "Note discarded.")
@@ -134,23 +151,17 @@ class HomePage : AppCompatActivity(), NotesAdapter.Interaction {
     }
 
     private fun initRecyclerView() {
-        notes_rv.apply {
-
-            notesAdapter = NotesAdapter(this@HomePage)
-            adapter = notesAdapter
-        }
+        notesAdapter = NotesAdapter(this@HomePage)
+        binder.notesRv.adapter = notesAdapter
 
         val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
-        itemTouchHelper.attachToRecyclerView(notes_rv)
-        FabHandler(notes_rv, add_note_button).start()
+        itemTouchHelper.attachToRecyclerView(binder.notesRv)
+        FabHandler(binder.notesRv, add_note_button).start()
     }
 
     override fun onItemSelected(item: Note) {
         val intent = Intent(this, AddEditNote::class.java)
-        intent.putExtra("EXTRA_ID", item.id)
-        intent.putExtra("EXTRA_TITLE", item.title)
-        intent.putExtra("EXTRA_CONTENT", item.content)
-        intent.putExtra("EXTRA_FAVORITE", item.isFavorite)
+        intent.putExtra("note", item)
 
         startActivityForResult(intent, EDIT_NOTE_REQUEST)
     }
