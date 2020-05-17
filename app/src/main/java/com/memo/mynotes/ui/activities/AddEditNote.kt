@@ -24,6 +24,7 @@ class AddEditNote : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binder =
             DataBindingUtil.setContentView(this, R.layout.add_note_activity)
 
@@ -36,12 +37,23 @@ class AddEditNote : AppCompatActivity() {
         title = if (noteExtra != null) {
             "Edit Note"
         } else {
-
             "Add a note"
         }
 
         addEditViewModel = ViewModelProviders.of(this).get(AddEditViewModel::class.java)
         addEditViewModel.initNote(noteExtra)
+
+        initObservers()
+
+        initColorButtons()
+
+        binder.favImageView.setOnClickListener {
+            addEditViewModel.setFavorite()
+        }
+
+    }
+
+    private fun initObservers() {
 
         addEditViewModel.isFavorite().observe(this, androidx.lifecycle.Observer {
             if (it) {
@@ -53,21 +65,18 @@ class AddEditNote : AppCompatActivity() {
 
         addEditViewModel.getNoteColor().observe(this, androidx.lifecycle.Observer {
             binder.root.setBackgroundColor(it)
-            if (it == AppData.BLUE) {
+            if (it == AppData.BLUE || it == AppData.GREEN) {
                 binder.titleEditText.setTextColor(AppData.WHITE)
                 binder.contentEditText.setTextColor(AppData.WHITE)
+            } else {
+                binder.titleEditText.setTextColor(AppData.BLACK)
+                binder.contentEditText.setTextColor(AppData.BLACK)
             }
         })
 
-        checkColorButtons()
-
-        binder.favImageView.setOnClickListener {
-            addEditViewModel.setFavorite()
-        }
-
     }
 
-    private fun checkColorButtons() {
+    private fun initColorButtons() {
 
         binder.whiteButton.setOnClickListener { addEditViewModel.setColor(AppData.WHITE) }
 
@@ -99,7 +108,6 @@ class AddEditNote : AppCompatActivity() {
                 // delete this note
                 addEditViewModel.deleteNote(noteExtra!!)
                 finish()
-
                 true
             }
             else -> {

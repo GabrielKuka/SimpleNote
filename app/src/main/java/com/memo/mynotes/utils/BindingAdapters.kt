@@ -1,6 +1,5 @@
 package com.memo.mynotes.utils
 
-import android.graphics.Color
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
@@ -28,10 +27,10 @@ class BindingAdapters {
         @JvmStatic
         @BindingAdapter("textColor")
         fun setTextColor(view: TextView, bgColor: Int) {
-            if (bgColor == Color.parseColor("#216AE3")) {
-                view.setTextColor(Color.parseColor("#ffffff"))
+            if (bgColor == AppData.BLUE || bgColor == AppData.GREEN) {
+                view.setTextColor(AppData.WHITE)
             } else {
-                view.setTextColor(Color.parseColor("#000000"))
+                view.setTextColor(AppData.BLACK)
             }
         }
     }

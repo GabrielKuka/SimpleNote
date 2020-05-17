@@ -60,6 +60,7 @@ class NotesAdapter(private val interaction: Interaction? = null) :
                 holder.binder.note = differ.currentList[position]
             }
         }
+
     }
 
     class NoteViewHolder(val binder: NotesItemBinding) : RecyclerView.ViewHolder(binder.root)

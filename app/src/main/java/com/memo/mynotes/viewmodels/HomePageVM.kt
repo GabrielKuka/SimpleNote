@@ -8,6 +8,7 @@ import com.memo.mynotes.repositories.NotesRepo
 import com.memo.mynotes.repositories.SharedPrefsRepo
 import com.memo.mynotes.room.NoteDb
 import com.memo.mynotes.room.entities.Note
+import com.memo.mynotes.utils.AppData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,9 +26,18 @@ class HomePageVM(application: Application) : AndroidViewModel(application) {
         postValue(sharedPrefsRepo.getLayoutPref())
     }
 
-    fun setLayoutPreference(value: Int) {
-        sharedPrefsRepo.setLayoutPref(value)
-        layoutPreference.postValue(value)
+    fun setLayoutPreference() {
+        if (layoutPreference.value == AppData.LINEAR_LAYOUT) {
+
+            sharedPrefsRepo.setLayoutPref(AppData.GRID_LAYOUT)
+            layoutPreference.value = AppData.GRID_LAYOUT
+        } else {
+
+            sharedPrefsRepo.setLayoutPref(AppData.LINEAR_LAYOUT)
+            layoutPreference.value = AppData.LINEAR_LAYOUT
+        }
+
+
     }
 
     fun getLayoutPreference(): LiveData<Int> {
@@ -54,7 +64,7 @@ class HomePageVM(application: Application) : AndroidViewModel(application) {
         return this.allNotes
     }
 
-    fun <T> MutableLiveData<T>.notifyObserver(){
+    fun <T> MutableLiveData<T>.notifyObserver() {
         this.value = this.value
     }
 

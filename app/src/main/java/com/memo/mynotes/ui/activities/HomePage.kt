@@ -49,18 +49,15 @@ class HomePage : AppCompatActivity(), NotesAdapter.Interaction {
         homePageVM = ViewModelProviders.of(this).get(HomePageVM::class.java)
 
         homePageVM.getAllNotes().observe(this, Observer {
-            notesAdapter.apply {
-                submitList(it)
-            }
+            notesAdapter.submitList(it)
 
         })
 
         homePageVM.getLayoutPreference().observe(this, Observer {
-            if (it == 0) {
+            if (it == AppData.LINEAR_LAYOUT) {
                 binder.layout = LinearLayoutManager(this)
             } else {
                 binder.layout = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-
             }
         })
     }
@@ -68,7 +65,7 @@ class HomePage : AppCompatActivity(), NotesAdapter.Interaction {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.homepage_menu, menu)
 
-        if (homePageVM.getLayoutPreference().value == 0) {
+        if (homePageVM.getLayoutPreference().value == AppData.LINEAR_LAYOUT) {
             menu?.findItem(R.id.layout_button)?.icon = getDrawable(R.drawable.ic_view_grid)
         } else {
             menu?.findItem(R.id.layout_button)?.icon = getDrawable(R.drawable.ic_view_list)
@@ -81,13 +78,15 @@ class HomePage : AppCompatActivity(), NotesAdapter.Interaction {
             R.id.layout_button -> {
                 // Change layout manager
 
-                if (homePageVM.getLayoutPreference().value == 1) {
-                    homePageVM.setLayoutPreference(0)
+                homePageVM.setLayoutPreference()
+
+                // Change the icon
+                if (homePageVM.getLayoutPreference().value == AppData.LINEAR_LAYOUT) {
                     item.icon = getDrawable(R.drawable.ic_view_grid)
                 } else {
-                    homePageVM.setLayoutPreference(1)
                     item.icon = getDrawable(R.drawable.ic_view_list)
                 }
+
                 true
             }
             R.id.del_all_button -> {
