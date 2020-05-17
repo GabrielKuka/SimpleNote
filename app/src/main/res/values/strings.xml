@@ -11,4 +11,12 @@
     <string name="grid">Grid</string>
     <string name="favorite">Mark as Favorite</string>
     <string name="del_all">Delete All</string>
+
+    <!-- Colors -->
+    <string name="white">#ffffff</string>
+    <string name="pink">#FFC0CB</string>
+    <string name="green">#00ff00</string>
+    <string name="blue">#216AE3</string>
+
 </resources>
+

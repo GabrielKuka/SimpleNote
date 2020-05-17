@@ -4,10 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
 import com.memo.mynotes.room.dao.NoteDao
 import com.memo.mynotes.room.entities.Note
-import com.memo.mynotes.utils.Converters
 
 @Database(entities = [Note::class], version = 4, exportSchema = false)
 abstract class NoteDb : RoomDatabase() {

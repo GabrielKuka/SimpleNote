@@ -1,17 +1,17 @@
 package com.memo.mynotes.ui.activities
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
+import com.meet.quicktoast.Quicktoast
 import com.memo.mynotes.R
 import com.memo.mynotes.databinding.AddNoteActivityBinding
 import com.memo.mynotes.room.entities.Note
-import com.memo.mynotes.utils.MessageHandler
+import com.memo.mynotes.utils.AppData
 import com.memo.mynotes.viewmodels.AddEditViewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -53,6 +53,10 @@ class AddEditNote : AppCompatActivity() {
 
         addEditViewModel.getNoteColor().observe(this, androidx.lifecycle.Observer {
             binder.root.setBackgroundColor(it)
+            if (it == AppData.BLUE) {
+                binder.titleEditText.setTextColor(AppData.WHITE)
+                binder.contentEditText.setTextColor(AppData.WHITE)
+            }
         })
 
         checkColorButtons()
@@ -64,13 +68,14 @@ class AddEditNote : AppCompatActivity() {
     }
 
     private fun checkColorButtons() {
-        binder.whiteButton.setOnClickListener { addEditViewModel.setColor((Color.parseColor("#ffffff"))) }
 
-        binder.blueButton.setOnClickListener { addEditViewModel.setColor(Color.parseColor("#216AE3")) }
+        binder.whiteButton.setOnClickListener { addEditViewModel.setColor(AppData.WHITE) }
 
-        binder.greenButton.setOnClickListener { addEditViewModel.setColor(Color.parseColor("#00ff00")) }
+        binder.blueButton.setOnClickListener { addEditViewModel.setColor(AppData.BLUE) }
 
-        binder.pinkButton.setOnClickListener { addEditViewModel.setColor(Color.parseColor("#FFC0CB")) }
+        binder.greenButton.setOnClickListener { addEditViewModel.setColor(AppData.GREEN) }
+
+        binder.pinkButton.setOnClickListener { addEditViewModel.setColor(AppData.PINK) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -117,7 +122,7 @@ class AddEditNote : AppCompatActivity() {
 
 
         if (title.isEmpty() || content.isEmpty()) {
-            MessageHandler.displayToast(this, "Fill all the fields.")
+            Quicktoast(this).swarn("Fill all the fields.")
             return
         }
 

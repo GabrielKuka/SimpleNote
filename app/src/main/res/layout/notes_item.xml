@@ -45,7 +45,7 @@
             android:layout_height="wrap_content">
 
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/note_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -60,7 +60,8 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.75" />
+                app:layout_constraintVertical_bias="0.75"
+                app:textColor="@{note.noteColor}" />
 
             <ImageView
                 android:id="@+id/fav_button"
@@ -79,7 +80,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/note_content"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -92,9 +93,10 @@
                 android:text="@{note.content}"
                 app:layout_constraintBottom_toTopOf="@+id/note_creation_date"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:textColor="@{note.noteColor}" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/note_creation_date"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -106,7 +108,8 @@
                 android:textSize="10sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:textColor="@{note.noteColor}" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,13 +13,14 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.meet.quicktoast.Quicktoast
 import com.memo.mynotes.R
 import com.memo.mynotes.databinding.HomePageActivityBinding
 import com.memo.mynotes.room.entities.Note
 import com.memo.mynotes.ui.adapters.NotesAdapter
 import com.memo.mynotes.ui.dialogs.BasicDialog
+import com.memo.mynotes.utils.AppData
 import com.memo.mynotes.utils.FabHandler
-import com.memo.mynotes.utils.MessageHandler
 import com.memo.mynotes.viewmodels.HomePageVM
 import kotlinx.android.synthetic.main.home_page_activity.*
 
@@ -27,8 +28,6 @@ class HomePage : AppCompatActivity(), NotesAdapter.Interaction {
 
     private lateinit var homePageVM: HomePageVM
     private lateinit var notesAdapter: NotesAdapter
-    private val ADD_NOTE_REQUEST = 1
-    private val EDIT_NOTE_REQUEST = 2
 
     private lateinit var binder: HomePageActivityBinding
 
@@ -41,7 +40,7 @@ class HomePage : AppCompatActivity(), NotesAdapter.Interaction {
         initViewModel()
 
         binder.addNoteButton.setOnClickListener {
-            startActivityForResult(Intent(this, AddEditNote::class.java), ADD_NOTE_REQUEST)
+            startActivityForResult(Intent(this, AddEditNote::class.java), AppData.ADD_NOTE_REQUEST)
         }
 
     }
@@ -116,7 +115,7 @@ class HomePage : AppCompatActivity(), NotesAdapter.Interaction {
 
             when (requestCode) {
 
-                ADD_NOTE_REQUEST -> {
+                AppData.ADD_NOTE_REQUEST -> {
 
                     val note =
                         Note(
@@ -130,10 +129,10 @@ class HomePage : AppCompatActivity(), NotesAdapter.Interaction {
 
                     homePageVM.insert(note)
 
-                    MessageHandler.displayToast(this, "Note added.")
+                    Quicktoast(this).stoast("Note added.")
 
                 }
-                EDIT_NOTE_REQUEST -> {
+                AppData.EDIT_NOTE_REQUEST -> {
 
                     val note = Note(
                         recNote?.id!!,
@@ -148,7 +147,7 @@ class HomePage : AppCompatActivity(), NotesAdapter.Interaction {
             }
 
         } else {
-            MessageHandler.displayToast(this, "Note discarded.")
+            Quicktoast(this).sinfo("Note discarded.")
         }
 
     }
@@ -166,7 +165,7 @@ class HomePage : AppCompatActivity(), NotesAdapter.Interaction {
         val intent = Intent(this, AddEditNote::class.java)
         intent.putExtra("note", item)
 
-        startActivityForResult(intent, EDIT_NOTE_REQUEST)
+        startActivityForResult(intent, AppData.EDIT_NOTE_REQUEST)
     }
 
     override fun onFavButtonClicked(note: Note) {
