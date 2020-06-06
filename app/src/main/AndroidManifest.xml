@@ -23,7 +23,7 @@
             android:parentActivityName=".ui.activities.HomePage" />
         <activity
             android:name=".ui.activities.HomePage"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTop"  />
     </application>
 
 </manifest>

@@ -1,10 +1,12 @@
 package com.memo.mynotes.ui.activities
 
 import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -13,6 +15,8 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.transition.Explode
+import androidx.transition.Transition
 import com.meet.quicktoast.Quicktoast
 import com.memo.mynotes.R
 import com.memo.mynotes.databinding.HomePageActivityBinding
